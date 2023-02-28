@@ -43,7 +43,7 @@ impl<T> HexGrid<T> {
     }
 }
 
-#[derive(Clone, Copy)]
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
 pub struct Cordinate {
     q: i32,
     r: i32,
@@ -51,6 +51,17 @@ pub struct Cordinate {
 }
 
 impl Cordinate {
+    pub fn from_basis_vec(direction: HexDirection) -> Self {
+        match direction {
+            HexDirection::North => Self {q:0, r:-1,s:1},
+            HexDirection::NorthEast => Self {q:1, r:-1,s:0},
+            HexDirection::SouthEast => Self {q:1, r:0,s:-1},
+            HexDirection::South => Self {q:0, r:1,s:-1},
+            HexDirection::SouthWest => Self {q:-1, r:1,s:0},
+            HexDirection::NorthWest => Self {q:-1, r:0,s:1},
+        }
+    }
+
     pub fn from_cube(q: i32, r: i32, s: i32) -> Result<Self, CordinateError> {
         if q + r + s != 0 {
             return Err(CordinateError::InvalidCubeCord(q, r, s));
@@ -91,6 +102,40 @@ impl Cordinate {
 
         (ring_offset + offset_around_ring).try_into().unwrap()
     }
+
+}
+
+impl std::ops::Add for Cordinate {
+    type Output = Self;
+
+    fn add(self, rhs: Self) -> Self::Output {
+        Self {
+            q:self.q + rhs.q,
+            r:self.r + rhs.r,
+            s:self.s + rhs.s
+        }
+    }
+}
+
+impl std::ops::Sub for Cordinate {
+    type Output = Self;
+
+    fn sub(self, rhs: Self) -> Self::Output {
+        Self {
+            q:self.q - rhs.q,
+            r:self.r - rhs.r,
+            s:self.s - rhs.s
+        }
+    }
+}
+
+pub enum HexDirection {
+    North,
+    NorthEast,
+    SouthEast,
+    South,
+    SouthWest,
+    NorthWest,
 }
 
 #[derive(Error, Debug)]
