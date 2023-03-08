@@ -1,4 +1,6 @@
+
 use thiserror::Error;
+use integer_sqrt::IntegerSquareRoot;
 
 pub struct HexGrid<T> {
     tiles: Vec<T>,
@@ -40,6 +42,16 @@ impl<T> HexGrid<T> {
 impl<T> HexGrid<T> {
     pub fn get(&self, cord: Cordinate) -> Option<&T> {
         self.tiles.get(cord.as_index())
+    }
+
+    fn index_distance(i:usize) -> i32 {
+        ((-1+4*i as i32).integer_sqrt() + 3) / 6
+    }
+
+    pub fn index_to_cord(i: usize) -> Cordinate {
+        let dist: i32 = Self::index_distance(i);
+
+        todo!()
     }
 }
 

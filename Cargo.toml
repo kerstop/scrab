@@ -8,3 +8,4 @@ edition = "2021"
 [dependencies]
 thiserror = "1.0.38"
 bevy = "0.9"
+integer-sqrt = "0.1.5"
