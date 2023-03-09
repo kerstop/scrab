@@ -78,15 +78,11 @@ impl<T> HexGrid<T> {
         (ring_offset + offset_around_ring).try_into().unwrap()
     }
 
-    fn index_distance(i: usize) -> i32 {
-        (((-1 + 4 * i as i32) * 3).integer_sqrt() + 3) / 6
-    }
-
     fn usize_to_cordinate(offset: usize) -> Cordinate {
 
         if offset == 0 {return Cordinate::new(0, 0, 0).unwrap();}
 
-        let dist: i32 = Self::index_distance(offset);
+        let dist: i32 = (((-1 + 4 * offset as i32) * 3).integer_sqrt() + 3) / 6;
 
         let offset_of_ring = 1 + 3 * dist * (dist - 1);
 
