@@ -151,6 +151,12 @@ impl Cordinate {
         }
         Ok(Self { q, r, s })
     }
+
+    pub fn to_pixel(&self, scale: f64) -> (i32,i32) {
+        let x: i32 = (scale * (1.5 * f64::from(self.q))) as i32;
+        let y: i32 = (scale * (3.0_f64.sqrt()/2.0 * f64::from(self.q) + 3.0_f64.sqrt() * f64::from(self.r))) as i32;
+        (x,y)
+    }
 }
 
 impl Display for Cordinate {
