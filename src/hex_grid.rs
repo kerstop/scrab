@@ -78,7 +78,7 @@ impl<T> HexGrid<T> {
         (ring_offset + offset_around_ring).try_into().unwrap()
     }
 
-    fn usize_to_cordinate(offset: usize) -> Cordinate {
+    pub fn usize_to_cordinate(offset: usize) -> Cordinate {
 
         if offset == 0 {return Cordinate::new(0, 0, 0).unwrap();}
 
