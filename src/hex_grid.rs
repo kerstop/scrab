@@ -78,7 +78,7 @@ impl<T> HexGrid<T> {
         (ring_offset + offset_around_ring).try_into().unwrap()
     }
 
-    pub fn usize_to_cordinate(offset: usize) -> Cordinate {
+    fn usize_to_cordinate(offset: usize) -> Cordinate {
 
         if offset == 0 {return Cordinate::new(0, 0, 0).unwrap();}
 
@@ -102,6 +102,26 @@ impl<T> HexGrid<T> {
             4 => Cordinate::new(-constant, decreasing, increasing).unwrap(),
             5 => Cordinate::new(-decreasing, -increasing, constant).unwrap(),
             _ => unreachable!(),
+        }
+    }
+
+    pub fn cordinates(&self) -> Cordinates {
+        Cordinates { indexes: 0..self.tiles.len() }
+    }
+}
+
+// An iterator over the cordinates in a `HexGrid`
+pub struct Cordinates {
+    indexes: std::ops::Range<usize>
+}
+
+impl Iterator for Cordinates {
+    type Item = Cordinate;
+
+    fn next(&mut self) -> Option<Self::Item> {
+        match self.indexes.next() {
+            Some(i) => Some(HexGrid::<()>::usize_to_cordinate(i)),
+            None => None,
         }
     }
 }
