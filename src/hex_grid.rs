@@ -79,8 +79,9 @@ impl<T> HexGrid<T> {
     }
 
     fn usize_to_cordinate(offset: usize) -> Cordinate {
-
-        if offset == 0 {return Cordinate::new(0, 0, 0).unwrap();}
+        if offset == 0 {
+            return Cordinate::new(0, 0, 0).unwrap();
+        }
 
         let dist: i32 = (((-1 + 4 * offset as i32) * 3).integer_sqrt() + 3) / 6;
 
@@ -106,13 +107,15 @@ impl<T> HexGrid<T> {
     }
 
     pub fn cordinates(&self) -> Cordinates {
-        Cordinates { indexes: 0..self.tiles.len() }
+        Cordinates {
+            indexes: 0..self.tiles.len(),
+        }
     }
 }
 
 // An iterator over the cordinates in a `HexGrid`
 pub struct Cordinates {
-    indexes: std::ops::Range<usize>
+    indexes: std::ops::Range<usize>,
 }
 
 impl Iterator for Cordinates {
@@ -128,9 +131,9 @@ impl Iterator for Cordinates {
 
 pub struct Iter<'a, T>
 where
-    T: 'a
+    T: 'a,
 {
-    iter: std::slice::Iter<'a, T>
+    iter: std::slice::Iter<'a, T>,
 }
 
 impl<'a, T> Iterator for Iter<'a, T> {
@@ -143,9 +146,9 @@ impl<'a, T> Iterator for Iter<'a, T> {
 
 pub struct IterMut<'a, T>
 where
-    T: 'a
+    T: 'a,
 {
-    iter: std::slice::IterMut<'a, T>
+    iter: std::slice::IterMut<'a, T>,
 }
 
 impl<'a, T> Iterator for IterMut<'a, T> {
@@ -155,7 +158,6 @@ impl<'a, T> Iterator for IterMut<'a, T> {
         self.iter.next()
     }
 }
-
 
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
 pub struct Cordinate {
@@ -172,10 +174,12 @@ impl Cordinate {
         Ok(Self { q, r, s })
     }
 
-    pub fn to_pixel(&self, scale: f64) -> (i32,i32) {
+    pub fn to_pixel(&self, scale: f64) -> (i32, i32) {
         let x: i32 = (scale * (1.5 * f64::from(self.q))) as i32;
-        let y: i32 = (scale * (3.0_f64.sqrt()/2.0 * f64::from(self.q) + 3.0_f64.sqrt() * f64::from(self.r))) as i32;
-        (x,y)
+        let y: i32 = (scale
+            * (3.0_f64.sqrt() / 2.0 * f64::from(self.q) + 3.0_f64.sqrt() * f64::from(self.r)))
+            as i32;
+        (x, y)
     }
 }
 
@@ -243,13 +247,30 @@ mod tests {
     use super::*;
 
     #[test]
+    fn place_and_read() {
+        let mut grid: HexGrid<i32> = HexGrid::new(11);
+
+        *grid.get_mut(&Cordinate::new(8, 2, -10).unwrap()).unwrap() = 1;
+        *grid.get_mut(&Cordinate::new(-3, 7, -4).unwrap()).unwrap() = 2;
+        *grid.get_mut(&Cordinate::new(7, -9, 2).unwrap()).unwrap() = 3;
+        *grid.get_mut(&Cordinate::new(8, -8, 0).unwrap()).unwrap() = 4;
+        *grid.get_mut(&Cordinate::new(4, 5, -9).unwrap()).unwrap() = 5;
+
+        assert_eq!(grid.get(&Cordinate::new(8, 2, -10).unwrap()).unwrap(), &1);
+        assert_eq!(grid.get(&Cordinate::new(-3, 7, -4).unwrap()).unwrap(), &2);
+        assert_eq!(grid.get(&Cordinate::new(7, -9, 2).unwrap()).unwrap(), &3);
+        assert_eq!(grid.get(&Cordinate::new(8, -8, 0).unwrap()).unwrap(), &4);
+        assert_eq!(grid.get(&Cordinate::new(4, 5, -9).unwrap()).unwrap(), &5);
+    }
+
+    #[test]
     fn new_sizes() {
-        let grid_zero = HexGrid::<String>::new(0);
-        let grid_one = HexGrid::<String>::new(1);
-        let grid_two = HexGrid::<String>::new(2);
-        let grid_three = HexGrid::<String>::new(3);
-        let grid_four = HexGrid::<String>::new(4);
-        let grid_five = HexGrid::<String>::new(5);
+        let grid_zero = HexGrid::<()>::new(0);
+        let grid_one = HexGrid::<()>::new(1);
+        let grid_two = HexGrid::<()>::new(2);
+        let grid_three = HexGrid::<()>::new(3);
+        let grid_four = HexGrid::<()>::new(4);
+        let grid_five = HexGrid::<()>::new(5);
 
         assert_eq!(grid_zero.tiles.len(), 0);
         assert_eq!(grid_one.tiles.len(), 1);
@@ -348,8 +369,70 @@ mod tests {
             (-3, 0, 3),
             (-2, -1, 3),
             (-1, -2, 3),
-        ].iter().enumerate().for_each(|(i, (q,r,s))| {
-            assert_eq!(HexGrid::<()>::usize_to_cordinate(i), Cordinate::new(*q, *r, *s).unwrap())
+        ]
+        .iter()
+        .enumerate()
+        .for_each(|(i, (q, r, s))| {
+            assert_eq!(
+                HexGrid::<()>::usize_to_cordinate(i),
+                Cordinate::new(*q, *r, *s).unwrap()
+            )
         });
+    }
+
+    #[test]
+    fn cordinates_iterator() {
+        let mut cords_fixed = vec![
+            (0, 0, 0),
+            (0, -1, 1),
+            (1, -1, 0),
+            (1, 0, -1),
+            (0, 1, -1),
+            (-1, 1, 0),
+            (-1, 0, 1),
+            (0, -2, 2),
+            (1, -2, 1),
+            (2, -2, 0),
+            (2, -1, -1),
+            (2, 0, -2),
+            (1, 1, -2),
+            (0, 2, -2),
+            (-1, 2, -1),
+            (-2, 2, 0),
+            (-2, 1, 1),
+            (-2, 0, 2),
+            (-1, -1, 2),
+            (0, -3, 3),
+            (1, -3, 2),
+            (2, -3, 1),
+            (3, -3, 0),
+            (3, -2, -1),
+            (3, -1, -2),
+            (3, 0, -3),
+            (2, 1, -3),
+            (1, 2, -3),
+            (0, 3, -3),
+            (-1, 3, -2),
+            (-2, 3, -1),
+            (-3, 3, 0),
+            (-3, 2, 1),
+            (-3, 1, 2),
+            (-3, 0, 3),
+            (-2, -1, 3),
+            (-1, -2, 3),
+        ]
+        .into_iter()
+        .map(|c| Cordinate::new(c.0, c.1, c.2).unwrap());
+        let mut cords_calculated = HexGrid::<()>::new(4).cordinates();
+
+        loop {
+            let c1 = cords_fixed.next();
+            let c2 = cords_calculated.next();
+            assert_eq!(c1, c2);
+
+            if c1.is_none() {
+                break;
+            }
+        }
     }
 }
