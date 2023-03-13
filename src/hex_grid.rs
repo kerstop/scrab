@@ -122,10 +122,7 @@ impl Iterator for Cordinates {
     type Item = Cordinate;
 
     fn next(&mut self) -> Option<Self::Item> {
-        match self.indexes.next() {
-            Some(i) => Some(HexGrid::<()>::usize_to_cordinate(i)),
-            None => None,
-        }
+        self.indexes.next().map(HexGrid::<()>::usize_to_cordinate)
     }
 }
 
