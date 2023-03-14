@@ -44,7 +44,7 @@ pub fn cord(input: TokenStream) -> TokenStream {
     }
 
     quote! {
-        scrab::hex_grid::Cordinate::new(#q, #r, #s).unwrap()
+        ::scrab::hex_grid::Cordinate::new(#q, #r, #s).unwrap()
     }
     .into()
 }
