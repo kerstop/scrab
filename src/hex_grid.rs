@@ -178,6 +178,14 @@ impl Cordinate {
             as i32;
         (x, y)
     }
+
+    pub fn magnitude(&self) -> i32 {
+        *[self.q, self.r, self.s]
+            .map(|v| v.abs())
+            .iter()
+            .max()
+            .unwrap()
+    }
 }
 
 impl Display for Cordinate {
