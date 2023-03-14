@@ -1,6 +1,6 @@
 import "./ViewWindow.css";
 import * as React from "react";
-import Tile from "./Tile";
+import Tile from "../Tile/Tile";
 
 function ViewWindow() {
     let cords: [number, number][] = [

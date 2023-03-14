@@ -1,24 +1,34 @@
 use std::sync::mpsc::channel;
 
+use actix_files::Files;
 use actix_web::{App, HttpServer};
-use log::info;
+use log::{error, info};
 
 use scrab::www;
 
-fn main() -> Result<(), std::io::Error>{
+fn main() -> Result<(), std::io::Error> {
+
+    simple_logger::init_with_level(log::Level::Debug).unwrap();
+
     let (tx, rx) = channel::<Result<(), std::io::Error>>();
 
     let web_server_thread = std::thread::spawn(move || {
         actix_web::rt::System::new().block_on(async move {
-            match HttpServer::new(|| App::new().service(www::health)).bind(("127.0.0.1", 8080)) {
-                Ok(s) => {
-                    tx.send(Ok(()));
-                    s.run().await;
-                }
+            let mut server = HttpServer::new(|| {
+                App::new()
+                    .service(www::health)
+                    .service(Files::new("/", "./frontend/dist").index_file("index.html"))
+            });
+            server = match server.bind(("127.0.0.1", 8080)) {
+                Ok(s) => s,
                 Err(e) => {
-                    tx.send(Err(e));
+                    tx.send(Err(e)).unwrap();
+                    return;
                 }
             };
+
+            tx.send(Ok(())).unwrap();
+            server.run().await.unwrap();
         })
     });
 
