@@ -1,8 +1,10 @@
 use std::fmt::Display;
 
 use integer_sqrt::IntegerSquareRoot;
+use serde::{Serialize, Deserialize};
 use thiserror::Error;
 
+#[derive(Serialize, Deserialize)]
 pub struct HexGrid<T> {
     tiles: Vec<T>,
 }
@@ -11,7 +13,7 @@ impl<T> HexGrid<T>
 where
     T: Default,
 {
-    pub fn new(size: usize) -> Self {
+    pub fn new(size: i32) -> Self {
         // 1 7 19
         // 0 6 18
         // x +1

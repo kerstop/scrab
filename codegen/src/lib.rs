@@ -5,7 +5,7 @@ use proc_macro2::Span;
 use quote::quote;
 use syn::parse::{Parse, ParseStream, Result};
 use syn::spanned::Spanned;
-use syn::{parse_macro_input, ExprUnary, LitInt, Token};
+use syn::{parse_macro_input, LitInt, Token};
 
 struct CordinateMacro {
     q: i32,
