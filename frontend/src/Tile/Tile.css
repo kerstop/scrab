@@ -3,7 +3,5 @@
     top: var(--y-pos);
     left: var(--x-pos);
     background-color: wheat;
-    height: 20px;
-    width: 20px;
     border-radius: 100%;
 }

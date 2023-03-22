@@ -3,6 +3,7 @@ use std::sync::RwLock;
 use actix_web::http::header::ContentType;
 use actix_web::web::{Data, Path};
 use actix_web::{get, Error, HttpResponse};
+use log::debug;
 
 use crate::hex_grid::Cordinate;
 use crate::world::{World};
@@ -20,6 +21,7 @@ async fn get_room(room: Path<String>, world: Data<RwLock<World>>) -> Result<Http
         if let Some(r) = world.read().unwrap().get(&c) {
 
             let body = serde_json::to_string(r).unwrap();
+            debug!("{body:?}");
             return Ok(HttpResponse::Ok()
                 .content_type(ContentType::json())
                 .body(body));

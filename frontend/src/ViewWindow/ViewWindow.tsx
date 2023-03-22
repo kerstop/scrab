@@ -43,11 +43,44 @@ function ViewWindow() {
         [-30, -86],
     ];
 
-    return <div className="ViewWindow">
-        {cords.map((cord, i) => {
-            return <Tile key={i} x={cord[0] + 250} y={cord[1] + 250}></Tile>
-        })}
-    </div>
+    let [room, setRoom] = React.useState<any>();
+
+    function get_room() {
+        return fetch("http://localhost:8080/world/0,0,0")
+            .then((resp) => {
+                return resp.json()
+            })
+    }
+
+    React.useEffect(() => {
+        get_room().then((data) => {
+            setRoom(data);
+        })
+    }, [])
+
+    console.log(room);
+
+    if (room === undefined) {
+        return (
+            <svg className="ViewWindow">
+                <g transform="translate(250,250) scale(1.5)">
+                    {cords.map((cord, i) => {
+                        return <Tile key={i} x={cord[0]} y={cord[1]} />
+                    })}
+                </g>
+            </svg>
+        )
+    } else {
+        return (
+<svg className="ViewWindow">
+                <g transform="translate(250,250) scale(1.5)">
+                    {room.tiles.tiles.map((cord:any, i:any) => {
+                        return <Tile key={i} x={cord[0]} y={cord[1]} />
+                    })}
+                </g>
+            </svg>
+        )
+    }
 }
 
 export default ViewWindow;

@@ -7,17 +7,10 @@ interface TileProps {
 }
 
 function Tile(props: TileProps) {
-
-    let tile: React.MutableRefObject<HTMLDivElement | null> = React.useRef(null);
-
-    React.useEffect(() => {
-        if (tile.current != null) {
-            tile.current.style.setProperty("--x-pos", props.x.toString()+"px");
-            tile.current.style.setProperty("--y-pos", props.y.toString()+"px");
-        }
-    }, [])
-
-    return <div ref={tile} className="Tile"></div>;
+    return <polygon
+    transform={`translate(${props.x}, ${props.y}) scale(0.18)`}
+    points="100,0 50,-87 -50,-87 -100,-0 -50,87 50,87"
+    />;
 }
 
 export default Tile;
