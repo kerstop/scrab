@@ -3,17 +3,20 @@ name = "scrab"
 version = "0.1.0"
 edition = "2021"
 
-# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+[lib]
+crate-type = ["cdylib", "rlib"]
 
 [workspace]
-members = ["codegen"]
+members = ["codegen", "hex_grid"]
 
 [dependencies]
+codegen = {path = "./codegen"}
+hex_grid = {path = "./hex_grid"}
+
 thiserror = "1.0"
 integer-sqrt = "0.1"
 actix-web = "4.3"
 log = "0.4"
-codegen = {path = "./codegen"}
 actix-files = "0.6"
 simple_logger = "4.0"
 actix-cors = "0.6"

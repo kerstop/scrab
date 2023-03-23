@@ -8,7 +8,7 @@ interface TileProps {
 
 function Tile(props: TileProps) {
     return <polygon
-    transform={`translate(${props.x}, ${props.y}) scale(0.18)`}
+    transform={`translate(${props.x}, ${props.y}) scale(0.8)`}
     points="100,0 50,-87 -50,-87 -100,-0 -50,87 50,87"
     />;
 }

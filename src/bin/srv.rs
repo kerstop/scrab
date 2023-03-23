@@ -2,17 +2,16 @@ use std::sync::{mpsc::channel, RwLock};
 
 use actix_cors::Cors;
 use actix_files::Files;
-use actix_web::{App, HttpServer, web::Data};
-use log::{error, info};
+use actix_web::{web::Data, App, HttpServer};
+use log::info;
 
-use scrab::{www, world::World};
+use scrab::{world::World, www};
 
 fn main() -> Result<(), std::io::Error> {
     simple_logger::init_with_level(log::Level::Debug).unwrap();
 
     let world = Data::new(RwLock::new(World::new(31)));
     let server_handle = world.clone();
-
 
     let (tx, rx) = channel::<Result<(), std::io::Error>>();
 

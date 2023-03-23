@@ -1,15 +1,17 @@
-use serde::{Serialize, Deserialize};
+use serde::{Deserialize, Serialize};
 
-use crate::hex_grid::{HexGrid, Cordinate};
+use hex_grid::{Cordinate, HexGrid};
 
 #[derive(Serialize, Deserialize)]
 pub struct World {
-    rooms: HexGrid<Room>,
+    pub(crate) rooms: HexGrid<Room>,
 }
 
 impl World {
     pub fn new(size: i32) -> Self {
-        World { rooms: HexGrid::new(size) }
+        World {
+            rooms: HexGrid::new(size),
+        }
     }
 
     pub fn get(&self, cord: &Cordinate) -> Option<&Room> {
@@ -23,7 +25,7 @@ impl World {
 
 #[derive(Serialize, Deserialize)]
 pub struct Room {
-    tiles: crate::hex_grid::HexGrid<Tile>,
+    pub(crate) tiles: hex_grid::HexGrid<Tile>,
 }
 
 impl Room {
@@ -38,17 +40,13 @@ impl Room {
 
 impl Default for Room {
     fn default() -> Self {
-        Self { tiles: HexGrid::new(31) }
+        Self {
+            tiles: HexGrid::new(21),
+        }
     }
 }
 
-#[derive(Serialize, Deserialize)]
+#[derive(Serialize, Deserialize, Default)]
 pub struct Tile {
     pub(crate) wall: bool,
-}
-
-impl Default for Tile {
-    fn default() -> Self {
-        Self { wall: false }
-    }
 }

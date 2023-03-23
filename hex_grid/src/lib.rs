@@ -1,7 +1,7 @@
 use std::fmt::Display;
 
 use integer_sqrt::IntegerSquareRoot;
-use serde::{Serialize, Deserialize};
+use serde::{Deserialize, Serialize};
 use thiserror::Error;
 
 #[derive(Serialize, Deserialize)]
@@ -173,6 +173,9 @@ impl Cordinate {
         Ok(Self { q, r, s })
     }
 
+    /// Convert from a cordinate type to a 2D cordinate
+    ///
+    /// The scale value should be the distance desired between hexegons
     pub fn to_pixel(&self, scale: f64) -> (i32, i32) {
         let x: i32 = (scale * (1.5 * f64::from(self.q))) as i32;
         let y: i32 = (scale

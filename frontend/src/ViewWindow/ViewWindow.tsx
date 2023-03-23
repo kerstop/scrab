@@ -1,6 +1,7 @@
 import "./ViewWindow.css";
 import * as React from "react";
 import Tile from "../Tile/Tile";
+import { PublicTile, PublicRoom } from "../types";
 
 function ViewWindow() {
     let cords: [number, number][] = [
@@ -43,10 +44,10 @@ function ViewWindow() {
         [-30, -86],
     ];
 
-    let [room, setRoom] = React.useState<any>();
+    let [room, setRoom] = React.useState<PublicRoom>();
 
     function get_room() {
-        return fetch("http://localhost:8080/world/0,0,0")
+        return fetch("http://localhost:8080/world/[0,0,0]")
             .then((resp) => {
                 return resp.json()
             })
@@ -73,9 +74,9 @@ function ViewWindow() {
     } else {
         return (
 <svg className="ViewWindow">
-                <g transform="translate(250,250) scale(1.5)">
-                    {room.tiles.tiles.map((cord:any, i:any) => {
-                        return <Tile key={i} x={cord[0]} y={cord[1]} />
+                <g transform="translate(350,350) scale(0.1)">
+                    {room.tiles.map((tile, i:any) => {
+                        return <Tile key={i} x={tile.x} y={tile.y} />
                     })}
                 </g>
             </svg>
