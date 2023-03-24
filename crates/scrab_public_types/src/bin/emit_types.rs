@@ -27,6 +27,7 @@ fn main() {
                 .args(["json-schema-to-typescript"])
                 .stdin(Stdio::piped())
                 .stdout(Stdio::piped())
+                .stderr(Stdio::null())
                 .spawn()
                 .expect("failed to run `npx json-schema-to-typescript`");
             proc.stdin.take().unwrap().write_all(b"{}").unwrap();
@@ -41,6 +42,7 @@ fn main() {
                 .args(["json-schema-to-typescript", "--no-bannerComment"])
                 .stdin(Stdio::piped())
                 .stdout(Stdio::piped())
+                .stderr(Stdio::null())
                 .spawn()
                 .expect("Ts types failed to generate");
 
