@@ -3,9 +3,9 @@ use std::sync::RwLock;
 use actix_web::web::{Data, Path};
 use actix_web::{get, Error, HttpResponse};
 
-use crate::public_types::*;
 use crate::world::World;
 use hex_grid::Cordinate;
+use scrab_public_types::PublicRoom;
 
 #[get("/health")]
 async fn health() -> &'static str {

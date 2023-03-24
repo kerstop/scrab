@@ -12,6 +12,7 @@ members = ["crates/*"]
 [dependencies]
 codegen = {path = "./crates/codegen"}
 hex_grid = {path = "./crates/hex_grid"}
+scrab_public_types = {path = "./crates/scrab_public_types"}
 
 thiserror = "1.0"
 integer-sqrt = "0.1"
