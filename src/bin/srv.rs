@@ -11,6 +11,7 @@ fn main() -> Result<(), std::io::Error> {
     simple_logger::init_with_level(log::Level::Debug).unwrap();
 
     let world = Data::new(RwLock::new(World::new(31)));
+    
     let server_handle = world.clone();
 
     let (tx, rx) = channel::<Result<(), std::io::Error>>();

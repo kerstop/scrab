@@ -1,7 +1,7 @@
 import "./ViewWindow.css";
 import * as React from "react";
 import Tile from "../Tile/Tile";
-import { PublicTile, PublicRoom } from "../types";
+import * as scrab from "../scrab_frontend_types";
 
 function ViewWindow() {
     let cords: [number, number][] = [
@@ -44,7 +44,7 @@ function ViewWindow() {
         [-30, -86],
     ];
 
-    let [room, setRoom] = React.useState<PublicRoom>();
+    let [room, setRoom] = React.useState<scrab.PublicRoom>();
 
     function get_room() {
         return fetch("http://localhost:8080/world/[0,0,0]")

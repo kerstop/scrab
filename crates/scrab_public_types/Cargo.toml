@@ -11,3 +11,5 @@ serde = { version = "1.0.158", features = ["derive"] }
 wasm-bindgen = "0.2.84"
 codegen = { path = "../codegen" }
 hex_grid = { path = "../hex_grid" }
+schemars = "0.8.12"
+serde_json = "1.0.94"

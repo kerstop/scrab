@@ -1,17 +1,18 @@
 
+use schemars::JsonSchema;
 use serde::Serialize;
 
-#[derive(Serialize)]
+#[derive(Serialize, JsonSchema)]
 pub struct PublicWorld {
     pub rooms: Vec<String>,
 }
 
-#[derive(Serialize)]
+#[derive(Serialize, JsonSchema)]
 pub struct PublicRoom {
     pub tiles: Vec<PublicTile>,
 }
 
-#[derive(Serialize)]
+#[derive(Serialize, JsonSchema)]
 pub struct PublicTile {
     pub wall: bool,
     pub name: String,
