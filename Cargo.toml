@@ -7,11 +7,11 @@ edition = "2021"
 crate-type = ["cdylib", "rlib"]
 
 [workspace]
-members = ["codegen", "hex_grid"]
+members = ["crates/*"]
 
 [dependencies]
-codegen = {path = "./codegen"}
-hex_grid = {path = "./hex_grid"}
+codegen = {path = "./crates/codegen"}
+hex_grid = {path = "./crates/hex_grid"}
 
 thiserror = "1.0"
 integer-sqrt = "0.1"
