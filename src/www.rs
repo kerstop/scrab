@@ -15,7 +15,7 @@ async fn health() -> &'static str {
 #[get("/world/{room}")]
 async fn get_room(room: Path<String>, world: Data<RwLock<World>>) -> Result<HttpResponse, Error> {
     if let Some(c) = parse_cord(room.as_str()) {
-        if let Some(r) = world.read().unwrap().get(&c) {
+        if let Some(r) = world.read().unwrap().rooms.get(c) {
             return Ok(HttpResponse::Ok().json(PublicRoom::from(r)));
         }
     }

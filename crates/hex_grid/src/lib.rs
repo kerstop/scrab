@@ -19,14 +19,14 @@ where
         // x +1
         let mut tiles: Vec<T> = Vec::new();
 
+        tiles.push(Default::default());
+
         if size == 0 {
             return Self { tiles };
         };
 
-        tiles.push(Default::default());
-
-        for i in 1..size {
-            for _ in 0..(6 * i) {
+        for i in 0..size {
+            for _ in 0..(6 * (i + 1)) {
                 tiles.push(Default::default())
             }
         }
@@ -36,15 +36,36 @@ where
 }
 
 impl<T> HexGrid<T> {
-    pub fn get(&self, cord: &Cordinate) -> Option<&T> {
+    pub fn from_fn<F>(mut generator: F, size: i32) -> Self
+    where
+        F: FnMut(Cordinate) -> T,
+    {
+        let mut tiles: Vec<T> = Vec::new();
+
+        let cords = Cordinates {
+            indexes: 0..Self::num_tiles_from_size(size) as usize,
+        };
+
+        for cord in cords {
+            tiles.push(generator(cord))
+        }
+
+        Self { tiles }
+    }
+
+    fn num_tiles_from_size(size: i32) -> i32 {
+        1 + 3 * size * (size + 1)
+    }
+
+    pub fn get(&self, cord: Cordinate) -> Option<&T> {
         self.tiles.get(Self::cordinate_to_usize(cord))
     }
 
-    pub fn get_mut(&mut self, cord: &Cordinate) -> Option<&mut T> {
+    pub fn get_mut(&mut self, cord: Cordinate) -> Option<&mut T> {
         self.tiles.get_mut(Self::cordinate_to_usize(cord))
     }
 
-    fn cordinate_to_usize(cord: &Cordinate) -> usize {
+    fn cordinate_to_usize(cord: Cordinate) -> usize {
         //find the lagest num thats the distance from center
         let dist: i32 = *[cord.q, cord.r, cord.s]
             .map(|v| v.abs())
@@ -113,6 +134,20 @@ impl<T> HexGrid<T> {
             indexes: 0..self.tiles.len(),
         }
     }
+
+    pub fn iter(&self) -> Iter<T> {
+        Iter {
+            iter: self.tiles.iter(),
+            cords: self.cordinates(),
+        }
+    }
+
+    pub fn iter_mut(&mut self) -> IterMut<T> {
+        IterMut {
+            cords: self.cordinates(),
+            iter: self.tiles.iter_mut(),
+        }
+    }
 }
 
 // An iterator over the cordinates in a `HexGrid`
@@ -133,13 +168,17 @@ where
     T: 'a,
 {
     iter: std::slice::Iter<'a, T>,
+    cords: Cordinates,
 }
 
 impl<'a, T> Iterator for Iter<'a, T> {
-    type Item = &'a T;
+    type Item = (&'a T, Cordinate);
 
     fn next(&mut self) -> Option<Self::Item> {
-        self.iter.next()
+        match (self.iter.next(), self.cords.next()) {
+            (Some(t), Some(c)) => Some((t, c)),
+            _ => None,
+        }
     }
 }
 
@@ -148,13 +187,17 @@ where
     T: 'a,
 {
     iter: std::slice::IterMut<'a, T>,
+    cords: Cordinates,
 }
 
 impl<'a, T> Iterator for IterMut<'a, T> {
-    type Item = &'a mut T;
+    type Item = (&'a mut T, Cordinate);
 
     fn next(&mut self) -> Option<Self::Item> {
-        self.iter.next()
+        match (self.iter.next(), self.cords.next()) {
+            (Some(t), Some(c)) => Some((t, c)),
+            _ => None,
+        }
     }
 }
 
@@ -260,17 +303,17 @@ mod tests {
     fn place_and_read() {
         let mut grid: HexGrid<i32> = HexGrid::new(11);
 
-        *grid.get_mut(&Cordinate::new(8, 2, -10).unwrap()).unwrap() = 1;
-        *grid.get_mut(&Cordinate::new(-3, 7, -4).unwrap()).unwrap() = 2;
-        *grid.get_mut(&Cordinate::new(7, -9, 2).unwrap()).unwrap() = 3;
-        *grid.get_mut(&Cordinate::new(8, -8, 0).unwrap()).unwrap() = 4;
-        *grid.get_mut(&Cordinate::new(4, 5, -9).unwrap()).unwrap() = 5;
+        *grid.get_mut(Cordinate::new(8, 2, -10).unwrap()).unwrap() = 1;
+        *grid.get_mut(Cordinate::new(-3, 7, -4).unwrap()).unwrap() = 2;
+        *grid.get_mut(Cordinate::new(7, -9, 2).unwrap()).unwrap() = 3;
+        *grid.get_mut(Cordinate::new(8, -8, 0).unwrap()).unwrap() = 4;
+        *grid.get_mut(Cordinate::new(4, 5, -9).unwrap()).unwrap() = 5;
 
-        assert_eq!(grid.get(&Cordinate::new(8, 2, -10).unwrap()).unwrap(), &1);
-        assert_eq!(grid.get(&Cordinate::new(-3, 7, -4).unwrap()).unwrap(), &2);
-        assert_eq!(grid.get(&Cordinate::new(7, -9, 2).unwrap()).unwrap(), &3);
-        assert_eq!(grid.get(&Cordinate::new(8, -8, 0).unwrap()).unwrap(), &4);
-        assert_eq!(grid.get(&Cordinate::new(4, 5, -9).unwrap()).unwrap(), &5);
+        assert_eq!(grid.get(Cordinate::new(8, 2, -10).unwrap()).unwrap(), &1);
+        assert_eq!(grid.get(Cordinate::new(-3, 7, -4).unwrap()).unwrap(), &2);
+        assert_eq!(grid.get(Cordinate::new(7, -9, 2).unwrap()).unwrap(), &3);
+        assert_eq!(grid.get(Cordinate::new(8, -8, 0).unwrap()).unwrap(), &4);
+        assert_eq!(grid.get(Cordinate::new(4, 5, -9).unwrap()).unwrap(), &5);
     }
 
     #[test]
@@ -282,12 +325,30 @@ mod tests {
         let grid_four = HexGrid::<()>::new(4);
         let grid_five = HexGrid::<()>::new(5);
 
-        assert_eq!(grid_zero.tiles.len(), 0);
-        assert_eq!(grid_one.tiles.len(), 1);
-        assert_eq!(grid_two.tiles.len(), 7);
-        assert_eq!(grid_three.tiles.len(), 19);
-        assert_eq!(grid_four.tiles.len(), 37);
-        assert_eq!(grid_five.tiles.len(), 61);
+        assert_eq!(
+            grid_zero.tiles.len(),
+            HexGrid::<()>::num_tiles_from_size(0) as usize
+        );
+        assert_eq!(
+            grid_one.tiles.len(),
+            HexGrid::<()>::num_tiles_from_size(1) as usize
+        );
+        assert_eq!(
+            grid_two.tiles.len(),
+            HexGrid::<()>::num_tiles_from_size(2) as usize
+        );
+        assert_eq!(
+            grid_three.tiles.len(),
+            HexGrid::<()>::num_tiles_from_size(3) as usize
+        );
+        assert_eq!(
+            grid_four.tiles.len(),
+            HexGrid::<()>::num_tiles_from_size(4) as usize
+        );
+        assert_eq!(
+            grid_five.tiles.len(),
+            HexGrid::<()>::num_tiles_from_size(5) as usize
+        );
     }
 
     #[test]
@@ -335,7 +396,7 @@ mod tests {
         .enumerate()
         .for_each(|(i, (q, r, s))| {
             let cord = Cordinate::new(*q, *r, *s).unwrap();
-            assert_eq!(HexGrid::<()>::cordinate_to_usize(&cord), i);
+            assert_eq!(HexGrid::<()>::cordinate_to_usize(cord), i);
         });
     }
 
@@ -433,7 +494,7 @@ mod tests {
         ]
         .into_iter()
         .map(|c| Cordinate::new(c.0, c.1, c.2).unwrap());
-        let mut cords_calculated = HexGrid::<()>::new(4).cordinates();
+        let mut cords_calculated = HexGrid::<()>::new(3).cordinates();
 
         loop {
             let c1 = cords_fixed.next();
