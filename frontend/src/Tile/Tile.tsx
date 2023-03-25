@@ -4,10 +4,14 @@ import "./Tile.css"
 interface TileProps {
     x: number,
     y: number,
+    wall: boolean,
 }
 
 function Tile(props: TileProps) {
+    let color = props.wall ? "#111111" : "rgb(68, 68, 68)"
+
     return <polygon
+    color="{}"
     transform={`translate(${props.x}, ${props.y}) scale(0.8)`}
     points="100,0 50,-87 -50,-87 -100,-0 -50,87 50,87"
     />;
