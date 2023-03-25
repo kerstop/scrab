@@ -66,7 +66,7 @@ function ViewWindow() {
             <svg className="ViewWindow">
                 <g transform="translate(250,250) scale(1.5)">
                     {cords.map((cord, i) => {
-                        return <Tile key={i} x={cord[0]} y={cord[1]} />
+                        return <Tile key={i} wall={false} x={cord[0]} y={cord[1]} />
                     })}
                 </g>
             </svg>
@@ -76,7 +76,7 @@ function ViewWindow() {
 <svg className="ViewWindow">
                 <g transform="translate(350,350) scale(0.1)">
                     {room.tiles.map((tile, i:any) => {
-                        return <Tile key={i} x={tile.x} y={tile.y} />
+                        return <Tile key={i} wall={tile.wall} x={tile.x} y={tile.y} />
                     })}
                 </g>
             </svg>
