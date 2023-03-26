@@ -17,7 +17,7 @@ fn main() -> Result<(), std::io::Error> {
 
         let room = world.rooms.get_mut(cord!(0, 0, 0)).unwrap();
 
-        for (tile, _cord) in room.tiles.iter_mut().take(40) {
+        for (tile, _cord) in room.tiles.iter_mut().take(37) {
             tile.wall = true
         }
     }

@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import './App.css'
+import './App.scss'
 import ViewWindow from '../ViewWindow/ViewWindow'
 
 function App() {

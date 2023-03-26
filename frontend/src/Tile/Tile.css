@@ -1,7 +1,0 @@
-.Tile {
-    position: absolute;
-    top: var(--y-pos);
-    left: var(--x-pos);
-    background-color: wheat;
-    border-radius: 100%;
-}
