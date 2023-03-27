@@ -219,11 +219,10 @@ impl Cordinate {
     /// Convert from a cordinate type to a 2D cordinate
     ///
     /// The scale value should be the distance desired between hexegons
-    pub fn to_pixel(&self, scale: f64) -> (i32, i32) {
-        let x: i32 = (scale * (1.5 * f64::from(self.q))) as i32;
-        let y: i32 = (scale
-            * (3.0_f64.sqrt() / 2.0 * f64::from(self.q) + 3.0_f64.sqrt() * f64::from(self.r)))
-            as i32;
+    pub fn to_pixel(&self, scale: f64) -> (f64, f64) {
+        let x: f64 = scale * (1.5 * f64::from(self.q));
+        let y: f64 =
+            scale * (3.0_f64.sqrt() / 2.0 * f64::from(self.q) + 3.0_f64.sqrt() * f64::from(self.r));
         (x, y)
     }
 

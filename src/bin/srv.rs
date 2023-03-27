@@ -10,7 +10,7 @@ use scrab::{cord, world::World, www};
 fn main() -> Result<(), std::io::Error> {
     simple_logger::init_with_level(log::Level::Debug).unwrap();
 
-    let world = Data::new(RwLock::new(World::new(31)));
+    let world = Data::new(RwLock::new(World::new()));
 
     {
         let mut world = world.write().unwrap();
@@ -38,6 +38,7 @@ fn main() -> Result<(), std::io::Error> {
                     )
                     .service(www::health)
                     .service(www::get_room)
+                    .service(www::get_world_manifest)
                     .service(Files::new("/", "./frontend/dist").index_file("index.html"))
                     .app_data(server_handle.clone())
             });

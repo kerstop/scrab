@@ -16,6 +16,12 @@ export interface PublicTile {
   [k: string]: unknown;
 }
 export interface PublicWorld {
-  rooms: string[];
+  rooms: PublicRoomManifest[];
+  [k: string]: unknown;
+}
+export interface PublicRoomManifest {
+  name: string;
+  screen_space_x: number;
+  screen_space_y: number;
   [k: string]: unknown;
 }
