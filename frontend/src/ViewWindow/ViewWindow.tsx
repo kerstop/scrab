@@ -30,12 +30,12 @@ function ViewWindow() {
         "wheel",
         (e) => {
           e.preventDefault();
-          let direction = e.deltaY > 0 ? 1.1 : 0.9
-          setZoom(zoom *= direction)
+          let direction = e.deltaY > 0 ? 1.1 : 0.9;
+          setZoom((zoom *= direction));
         },
         { passive: false }
       );
-      setListenersMounted(true)
+      setListenersMounted(true);
     }
   });
 
@@ -50,8 +50,8 @@ function ViewWindow() {
           if (window.current !== null) {
             window.current.onmousemove = (e) => {
               console.log(`(${e.movementX}, ${e.movementY})`);
-              setX((x += e.movementX));
-              setY((y += e.movementY));
+              setX((x += e.movementX / zoom));
+              setY((y += e.movementY / zoom));
             };
           }
         }}
@@ -66,7 +66,11 @@ function ViewWindow() {
           }
         }}
       >
-        <g transform={`translate(${350 + x},${350 + y}) scale(${zoom})`}>
+        <g
+          transform={`translate(${350 + x * zoom},${
+            350 + y * zoom
+          }) scale(${zoom})`}
+        >
           {room.tiles.map((tile, i: any) => {
             return <Tile key={i} wall={tile.wall} x={tile.x} y={tile.y} />;
           })}
