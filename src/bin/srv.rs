@@ -5,24 +5,14 @@ use actix_files::Files;
 use actix_web::{web::Data, App, HttpServer};
 use log::info;
 
-use scrab::{cord, world::World, www};
+use scrab::{world::World, www};
 
 fn main() -> Result<(), std::io::Error> {
     simple_logger::init_with_level(log::Level::Debug).unwrap();
 
-    let world = Data::new(RwLock::new(World::new()));
+    let world = RwLock::new(World::new());
 
-    {
-        let mut world = world.write().unwrap();
-
-        let room = world.rooms.get_mut(cord!(0, 0, 0)).unwrap();
-
-        for (tile, _cord) in room.tiles.iter_mut().take(37) {
-            tile.wall = true
-        }
-    }
-
-    let server_handle = world.clone();
+    let server_handle = Data::new(world);
 
     let (tx, rx) = channel::<Result<(), std::io::Error>>();
 
