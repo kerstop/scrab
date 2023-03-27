@@ -12,5 +12,4 @@ build: emit-ts-types
 
 # build the frontend/src/types.d.ts file
 emit-ts-types:
-    cd frontend/src
-    cargo run --package scrab_public_types --bin emit_types
+    cd frontend/src; cargo run --package scrab_public_types --bin emit_types
