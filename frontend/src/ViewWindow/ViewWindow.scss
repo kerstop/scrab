@@ -1,7 +1,7 @@
 .ViewWindow {
-    position: relative;
-    border: 2px solid red;
-    height: 700px;
-    width: 700px;
-    overflow: scroll;
+    position: absolute;
+    height: 100%;
+    width: 100%;
+    left: 0;
+    top: 0;
 }

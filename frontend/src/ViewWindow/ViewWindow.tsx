@@ -7,8 +7,8 @@ function ViewWindow() {
   let [room, setRoom] = React.useState<scrab.PublicRoom>();
   let [x, setX] = React.useState(0);
   let [y, setY] = React.useState(0);
+  let [viewSize, setViewSize] = React.useState([0,0])
   let [zoom, setZoom] = React.useState(1);
-  let delta = React.useRef<[number, number]>(null);
   let [listenersMounted, setListenersMounted] = React.useState(false);
   let window = React.useRef<SVGSVGElement>(null);
 
@@ -30,12 +30,13 @@ function ViewWindow() {
         "wheel",
         (e) => {
           e.preventDefault();
-          let direction = e.deltaY > 0 ? 1.1 : 0.9;
+          let direction = e.deltaY > 0 ? 0.8 : 1.2;
           setZoom((zoom *= direction));
         },
         { passive: false }
       );
       setListenersMounted(true);
+      setViewSize([window.current.clientWidth, window.current.clientHeight])
     }
   });
 
@@ -67,8 +68,8 @@ function ViewWindow() {
         }}
       >
         <g
-          transform={`translate(${350 + x * zoom},${
-            350 + y * zoom
+          transform={`translate(${viewSize[0]/2 + x * zoom},${
+            viewSize[1]/2 + y * zoom
           }) scale(${zoom})`}
         >
           {room.tiles.map((tile, i: any) => {
