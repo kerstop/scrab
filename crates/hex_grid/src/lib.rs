@@ -219,10 +219,18 @@ impl Cordinate {
     /// Convert from a cordinate type to a 2D cordinate
     ///
     /// The scale value should be the distance desired between hexegons
-    pub fn to_pixel(&self, scale: f64) -> (f64, f64) {
+
+    pub fn to_pixel_flat(&self, scale: f64) -> (f64, f64) {
         let x: f64 = scale * (1.5 * f64::from(self.q));
         let y: f64 =
             scale * (3.0_f64.sqrt() / 2.0 * f64::from(self.q) + 3.0_f64.sqrt() * f64::from(self.r));
+        (x, y)
+    }
+
+    pub fn to_pixel_point(&self, scale: f64) -> (f64, f64) {
+        let x: f64 =
+            scale * (3.0_f64.sqrt() * f64::from(self.q) + 3.0_f64.sqrt() / 2.0 * f64::from(self.r));
+        let y: f64 = scale * (1.5 * f64::from(self.r));
         (x, y)
     }
 
@@ -244,12 +252,12 @@ impl Display for Cordinate {
 impl From<HexDirection> for Cordinate {
     fn from(value: HexDirection) -> Self {
         match value {
-            HexDirection::North => Self { q: 0, r: -1, s: 1 },
-            HexDirection::NorthEast => Self { q: 1, r: -1, s: 0 },
-            HexDirection::SouthEast => Self { q: 1, r: 0, s: -1 },
-            HexDirection::South => Self { q: 0, r: 1, s: -1 },
-            HexDirection::SouthWest => Self { q: -1, r: 1, s: 0 },
-            HexDirection::NorthWest => Self { q: -1, r: 0, s: 1 },
+            HexDirection::SR => Self { q: 0, r: -1, s: 1 },
+            HexDirection::QR => Self { q: 1, r: -1, s: 0 },
+            HexDirection::QS => Self { q: 1, r: 0, s: -1 },
+            HexDirection::RS => Self { q: 0, r: 1, s: -1 },
+            HexDirection::RQ => Self { q: -1, r: 1, s: 0 },
+            HexDirection::SQ => Self { q: -1, r: 0, s: 1 },
         }
     }
 }
@@ -278,14 +286,17 @@ impl std::ops::Sub for Cordinate {
     }
 }
 
+/// The first letter is the cordinate component that will increase, the second is the
+/// cordinate component that will decrease
+
 #[derive(Clone, Copy, PartialEq, Eq, Debug)]
 pub enum HexDirection {
-    North,
-    NorthEast,
-    SouthEast,
-    South,
-    SouthWest,
-    NorthWest,
+    SR,
+    QR,
+    QS,
+    RS,
+    RQ,
+    SQ,
 }
 
 #[derive(Error, Debug)]

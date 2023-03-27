@@ -22,7 +22,7 @@ function App() {
     <div className="App">
       <ViewWindow>
         {world !== undefined ? (
-          world.rooms.filter((_, i)=> i < 7).map((room, i) => {
+          world.rooms.filter((_, i)=> i < 37).map((room, i) => {
             return <Room
               name={room.name}
               x={room.screen_space_x}

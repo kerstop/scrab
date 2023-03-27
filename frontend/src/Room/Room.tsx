@@ -23,14 +23,14 @@ export default function Room(args: RoomArgs) {
 
   if (room !== undefined) {
     return (
-      <g>
+      <g transform={`translate(${args.x??0}, ${args.y??0})`}>
         {room.tiles.map((tile, i: any) => {
           return (
             <Tile
               key={i}
               wall={tile.wall}
-              x={tile.x + (args.x ?? 0)}
-              y={tile.y + (args.y ?? 0)}
+              x={tile.x}
+              y={tile.y}
             />
           );
         })}
