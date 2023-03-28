@@ -216,6 +216,18 @@ impl Cordinate {
         Ok(Self { q, r, s })
     }
 
+    pub fn get_q(&self) -> i32 {
+        self.q
+    }
+
+    pub fn get_r(&self) -> i32 {
+        self.r
+    }
+
+    pub fn get_s(&self) -> i32 {
+        self.s
+    }
+
     /// Convert from a cordinate type to a 2D cordinate
     ///
     /// The scale value should be the distance desired between hexegons
