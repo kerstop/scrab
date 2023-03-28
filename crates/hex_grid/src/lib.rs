@@ -216,15 +216,15 @@ impl Cordinate {
         Ok(Self { q, r, s })
     }
 
-    pub fn get_q(&self) -> i32 {
+    pub fn q(&self) -> i32 {
         self.q
     }
 
-    pub fn get_r(&self) -> i32 {
+    pub fn r(&self) -> i32 {
         self.r
     }
 
-    pub fn get_s(&self) -> i32 {
+    pub fn s(&self) -> i32 {
         self.s
     }
 
