@@ -4,9 +4,22 @@ use integer_sqrt::IntegerSquareRoot;
 use serde::{Deserialize, Serialize};
 use thiserror::Error;
 
-#[derive(Serialize, Deserialize)]
+#[derive(Serialize, Deserialize, Clone)]
 pub struct HexGrid<T> {
     tiles: Vec<T>,
+}
+
+impl<T> HexGrid<T>
+where
+    T: Clone,
+{
+    pub fn from_template(template: T, size: i32) -> Self {
+        let mut tiles = Vec::new();
+        for _ in 0..Self::num_tiles_from_size(size) {
+            tiles.push(template.clone())
+        }
+        HexGrid { tiles }
+    }
 }
 
 impl<T> HexGrid<T>
@@ -298,8 +311,8 @@ impl std::ops::Sub for Cordinate {
     }
 }
 
-/// The first letter is the cordinate component that will increase, the second is the
-/// cordinate component that will decrease
+/// The first letter is the cordinate component that will increase, the second
+/// is the cordinate component that will decrease
 
 #[derive(Clone, Copy, PartialEq, Eq, Debug)]
 pub enum HexDirection {

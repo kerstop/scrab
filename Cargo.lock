@@ -1147,6 +1147,7 @@ dependencies = [
  "integer-sqrt",
  "log",
  "noise",
+ "rand 0.8.5",
  "schemars",
  "scrab_public_types",
  "serde",
