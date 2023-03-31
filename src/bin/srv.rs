@@ -3,17 +3,22 @@ use std::sync::{mpsc::channel, RwLock};
 use actix_cors::Cors;
 use actix_files::Files;
 use actix_web::{web::Data, App, HttpServer};
-use log::info;
+use log::{error, info};
+use toml::from_str;
 
-use scrab::{world::World, www};
+use scrab::{
+    world::{World, WorldGenerationSettings},
+    www,
+};
 
 fn main() -> Result<(), std::io::Error> {
     simple_logger::init_with_level(log::Level::Debug).unwrap();
 
-    let world = RwLock::new(World::new());
+    let config = load_config();
+
+    let world = RwLock::new(World::from(config));
 
     let server_handle = Data::new(world);
-
     let (tx, rx) = channel::<Result<(), std::io::Error>>();
 
     let web_server_thread = std::thread::spawn(move || {
@@ -53,4 +58,32 @@ fn main() -> Result<(), std::io::Error> {
     web_server_thread.join().unwrap();
 
     Ok(())
+}
+
+fn load_config() -> WorldGenerationSettings {
+    let mut settings: WorldGenerationSettings = match std::fs::read_to_string("world_gen.toml") {
+        Ok(text) => match toml::from_str(&text) {
+            Ok(settings) => settings,
+            Err(e) => {
+                eprintln!("Error opening config: {}", e);
+                eprintln!(
+                    "Should follow following format:\n\n{}",
+                    toml::to_string_pretty(&WorldGenerationSettings::default()).unwrap()
+                );
+
+                Default::default()
+            }
+        },
+        Err(e) => {
+            error!("Error importing config using default");
+            eprintln!("Error opening config: {}", e);
+            Default::default()
+        }
+    };
+
+    if settings.seed == 0 {
+        settings.seed = rand::random();
+    }
+
+    settings
 }

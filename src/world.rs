@@ -1,6 +1,7 @@
-pub mod world_gen;
+mod world_gen;
 
-use noise::{*, core::value};
+use clap::Parser;
+use noise::{Perlin, NoiseFn};
 use scrab_public_types::*;
 use serde::{Deserialize, Serialize};
 
@@ -14,7 +15,9 @@ pub struct World {
 
 impl World {
     pub fn new() -> Self {
-        WorldGenerationSettings::default().into()
+        let mut settings = WorldGenerationSettings::default();
+        settings.seed = rand::random();
+        settings.into()
     }
 
     pub fn gen_settings(&self) -> &WorldGenerationSettings {
@@ -104,18 +107,18 @@ impl From<WorldGenerationSettings> for World {
 
 #[derive(Serialize, Deserialize)]
 pub struct WorldGenerationSettings {
-    seed: i32,
-    wall_threshold: f64,
-    noise_scale: f64,
+    pub seed: i32,
+    pub wall_threshold: f64,
+    pub noise_scale: f64,
 
-    room_size: i32,
-    world_size: i32,
+    pub room_size: i32,
+    pub world_size: i32,
 }
 
 impl Default for WorldGenerationSettings {
     fn default() -> Self {
         Self {
-            seed: rand::random(),
+            seed: 0,
             wall_threshold: 0.6,
             noise_scale: 0.08,
             room_size: 20,

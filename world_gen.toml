@@ -1,0 +1,5 @@
+seed = 0
+wall_threshold = 0.6
+noise_scale = 0.08
+room_size = 20
+world_size = 5
