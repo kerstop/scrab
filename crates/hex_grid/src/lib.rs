@@ -26,7 +26,9 @@ impl<T> HexGrid<T>
 where
     T: Default,
 {
-    pub fn new(size: i32) -> Self {
+    /// returns a new hex grid with the specified number of rings around the
+    /// center
+    pub fn new(rings: i32) -> Self {
         // 1 7 19
         // 0 6 18
         // x +1
@@ -34,11 +36,11 @@ where
 
         tiles.push(Default::default());
 
-        if size == 0 {
+        if rings == 0 {
             return Self { tiles };
         };
 
-        for i in 0..size {
+        for i in 0..rings {
             for _ in 0..(6 * (i + 1)) {
                 tiles.push(Default::default())
             }

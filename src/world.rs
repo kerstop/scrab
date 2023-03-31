@@ -1,4 +1,6 @@
-use noise::*;
+pub mod world_gen;
+
+use noise::{*, core::value};
 use scrab_public_types::*;
 use serde::{Deserialize, Serialize};
 
@@ -39,13 +41,43 @@ impl World {
         let wall_threshhold = self.gen_settings.wall_threshold;
         let noise = Perlin::new(self.gen_settings.seed as u32);
         let noise_scale = self.gen_settings.noise_scale;
+        let world_size = self.gen_settings.world_size;
+        let room_size = self.gen_settings.room_size;
+
+        // generate random noise
+        let mut noise_map: HexGrid<HexGrid<f64>> =
+            HexGrid::from_template(HexGrid::new(room_size), world_size);
+        for (room, room_cord) in noise_map.iter_mut() {
+            for (tile, tile_cord) in room.iter_mut() {
+                let (x, y) = tile_to_worldspace(
+                    tile_cord,
+                    room_cord,
+                    self.gen_settings.room_size,
+                    noise_scale,
+                );
+                let value = world_gen::remap(-1.0, 1.0, 0.0, 1.0,  noise.get([x, y]));
+                *tile = value;
+            }
+        }
+
+        // put walls along the borders to rooms
+        let mut room_edges_map: HexGrid<HexGrid<f64>> =
+            HexGrid::from_template(HexGrid::new(room_size), world_size);
+        for (room, room_cord) in room_edges_map.iter_mut() {
+            for (tile, tile_cord) in room.iter_mut() {
+                if tile_cord.magnitude() == room_size {
+                    *tile = 1.0;
+                }
+            }
+        }
 
         for (room, room_cord) in self.rooms.iter_mut() {
             for (tile, tile_cord) in room.tiles.iter_mut() {
-                let (x, y) =
-                    tile_to_worldspace(tile_cord, room_cord, self.gen_settings.room_size, noise_scale);
-                let value = noise.get([x, y]);
-                tile.wall = value > wall_threshhold;
+
+                let noise_map_value = *noise_map.get(room_cord).unwrap().get(tile_cord).unwrap();
+                let edges_map_value = *room_edges_map.get(room_cord).unwrap().get(tile_cord).unwrap();
+
+                tile.wall = (noise_map_value + edges_map_value) > wall_threshhold;
             }
         }
     }
@@ -84,7 +116,7 @@ impl Default for WorldGenerationSettings {
     fn default() -> Self {
         Self {
             seed: rand::random(),
-            wall_threshold: 0.3,
+            wall_threshold: 0.6,
             noise_scale: 0.08,
             room_size: 20,
             world_size: 20,
