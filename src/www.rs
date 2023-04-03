@@ -1,11 +1,16 @@
-use std::sync::RwLock;
+use std::sync::{RwLock, Arc};
 
 use actix_web::web::{Data, Path};
-use actix_web::{get, Error, HttpResponse};
+use actix_web::{get, HttpResponse};
 
 use crate::world::World;
 use hex_grid::Cordinate;
-use scrab_public_types::{PublicRoom, PublicRoomManifest, PublicWorld};
+use scrab_public_types::{PublicRoom, PublicWorld};
+
+#[derive(Clone)]
+pub struct AppState {
+    pub world: Arc<RwLock<World>>,
+}
 
 #[get("/health")]
 async fn health() -> &'static str {

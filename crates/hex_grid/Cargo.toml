@@ -6,6 +6,9 @@ edition = "2021"
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
+
+codegen = { path = "../codegen" }
+
 integer-sqrt = "0.1.5"
 serde = { version = "1.0.158", features = ["derive"] }
 thiserror = "1.0.40"

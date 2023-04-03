@@ -1,14 +1,17 @@
-use std::sync::{mpsc::channel, RwLock};
+pub mod game_logic;
+pub mod world;
+pub mod www;
+
+use std::sync::{Arc, RwLock};
 
 use actix_cors::Cors;
 use actix_files::Files;
 use actix_web::{web::Data, App, HttpServer};
 use log::{error, info};
-use toml::from_str;
 
-use scrab::{
+use crate::{
     world::{World, WorldGenerationSettings},
-    www,
+    www::AppState,
 };
 
 fn main() -> Result<(), std::io::Error> {
@@ -16,10 +19,14 @@ fn main() -> Result<(), std::io::Error> {
 
     let config = load_config();
 
-    let world = RwLock::new(World::from(config));
+    let world = Arc::from(RwLock::new(World::from(config)));
 
-    let server_handle = Data::new(world);
-    let (tx, rx) = channel::<Result<(), std::io::Error>>();
+    let app_state = Data::new(AppState {
+        world: Arc::clone(&world),
+    });
+
+    let gl_handle = Arc::clone(&world);
+    let game_logic_thread = std::thread::spawn(|| game_logic::main_event_loop(gl_handle));
 
     let web_server_thread = std::thread::spawn(move || {
         actix_web::rt::System::new().block_on(async move {
@@ -35,27 +42,25 @@ fn main() -> Result<(), std::io::Error> {
                     .service(www::get_room)
                     .service(www::get_world_manifest)
                     .service(Files::new("/", "./frontend/dist").index_file("index.html"))
-                    .app_data(server_handle.clone())
+                    .app_data(app_state.clone())
             });
             server = match server.bind(("127.0.0.1", 8080)) {
                 Ok(s) => s,
                 Err(e) => {
-                    tx.send(Err(e)).unwrap();
+                    error!("Server error: {}", e);
                     return;
                 }
             };
 
-            tx.send(Ok(())).unwrap();
+            server = server.disable_signals();
+
+            info!("Web server started sucessfully");
             server.run().await.unwrap();
         })
     });
 
-    //wait for the http server to start and
-    //check for errors from server start.
-    rx.recv().unwrap()?;
-    info!("Web server started sucessfully");
-
     web_server_thread.join().unwrap();
+    game_logic_thread.join().unwrap();
 
     Ok(())
 }

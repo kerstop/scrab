@@ -4,6 +4,8 @@ use integer_sqrt::IntegerSquareRoot;
 use serde::{Deserialize, Serialize};
 use thiserror::Error;
 
+pub use codegen::cord;
+
 #[derive(Serialize, Deserialize, Clone)]
 pub struct HexGrid<T> {
     tiles: Vec<T>,

@@ -1,6 +1,5 @@
 mod world_gen;
 
-use clap::Parser;
 use noise::{Perlin, NoiseFn};
 use scrab_public_types::*;
 use serde::{Deserialize, Serialize};
@@ -11,6 +10,7 @@ use hex_grid::{Cordinate, HexGrid};
 pub struct World {
     pub rooms: HexGrid<Room>,
     gen_settings: WorldGenerationSettings,
+    pub current_tick: u64,
 }
 
 impl World {
@@ -66,7 +66,7 @@ impl World {
         // put walls along the borders to rooms
         let mut room_edges_map: HexGrid<HexGrid<f64>> =
             HexGrid::from_template(HexGrid::new(room_size), world_size);
-        for (room, room_cord) in room_edges_map.iter_mut() {
+        for (room, _room_cord) in room_edges_map.iter_mut() {
             for (tile, tile_cord) in room.iter_mut() {
                 if tile_cord.magnitude() == room_size {
                     *tile = 1.0;
@@ -97,6 +97,7 @@ impl From<WorldGenerationSettings> for World {
         let mut world = World {
             rooms: HexGrid::from_template(Room::new(settings.room_size), settings.world_size),
             gen_settings: settings,
+            current_tick: 0,
         };
 
         world.generate_walls();
