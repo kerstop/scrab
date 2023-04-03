@@ -9,8 +9,9 @@ use actix_files::Files;
 use actix_web::{web::Data, App, HttpServer};
 use log::{error, info};
 
+use scrab_types::World;
 use crate::{
-    world::{World, WorldGenerationSettings},
+    world::WorldGenerationSettings,
     www::AppState,
 };
 

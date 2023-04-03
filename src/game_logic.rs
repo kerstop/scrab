@@ -2,7 +2,7 @@ use std::{sync::{Arc, RwLock}, time::Duration};
 
 use log::info;
 
-use crate::world::World;
+use scrab_types::World;
 
 
 

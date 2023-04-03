@@ -1,9 +1,10 @@
+use std::ops::Deref;
 use std::sync::{RwLock, Arc};
 
 use actix_web::web::{Data, Path};
 use actix_web::{get, HttpResponse};
 
-use crate::world::World;
+use scrab_types::World;
 use hex_grid::Cordinate;
 use scrab_public_types::{PublicRoom, PublicWorld};
 
@@ -42,7 +43,7 @@ fn parse_cord(input: &str) -> Option<Cordinate> {
 #[get("/world/")]
 async fn get_world_manifest(world: Data<RwLock<World>>) -> HttpResponse {
     if let Ok(world) = world.read() {
-        return HttpResponse::Ok().json(PublicWorld::from(world.to_pub()));
+        return HttpResponse::Ok().json(PublicWorld::from(world.deref()));
     }
     todo!()
 }
