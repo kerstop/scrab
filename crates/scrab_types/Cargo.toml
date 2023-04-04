@@ -7,4 +7,6 @@ edition = "2021"
 
 [dependencies]
 hex_grid = { version = "0.1.0", path = "../hex_grid" }
+log = "0.4.17"
 serde = { version = "1.0.159", features = ["derive"] }
+thiserror = "1.0.40"

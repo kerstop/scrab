@@ -218,7 +218,7 @@ impl<'a, T> Iterator for IterMut<'a, T> {
     }
 }
 
-#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+#[derive(Serialize, Deserialize, Clone, Copy, Debug, PartialEq, Eq, Hash)]
 pub struct Cordinate {
     q: i32,
     r: i32,
