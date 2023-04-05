@@ -226,6 +226,14 @@ pub struct Cordinate {
 }
 
 impl Cordinate {
+
+    pub const fn new_inline<const Q: i32, const R: i32, const S: i32>() -> Self {
+        if Q + R + S != 0 {
+            panic!("components must add to zero")
+        }
+        Self { q:Q, r:R, s:S }
+    }
+
     pub fn new(q: i32, r: i32, s: i32) -> Result<Self, CordinateError> {
         if q + r + s != 0 {
             return Err(CordinateError::InvalidCubeCord(q, r, s));
