@@ -1,17 +1,18 @@
 use std::collections::HashMap;
 
-use hex_grid::{HexGrid, Cordinate};
+use hex_grid::{Cordinate, HexGrid};
 use log::info;
-use serde::{Serialize, Deserialize};
+use serde::{Deserialize, Serialize};
 use thiserror::Error;
 
 #[derive(Serialize, Deserialize)]
 pub struct World {
     pub rooms: HexGrid<Room>,
-    entities: HashMap<Position, Vec<Entity>>,
+    entities: Vec<Entity>,
     pub room_size: i32,
     pub world_size: i32,
     pub current_tick: u64,
+    next_entity_id: u128,
 }
 
 impl World {
@@ -22,37 +23,15 @@ impl World {
             room_size,
             world_size,
             current_tick: 0,
-            entities: HashMap::new(),
+            entities: Vec::new(),
+            next_entity_id: 0,
         }
     }
 
-    pub fn insert_entity(&mut self, entity: Entity) -> ScrabResult<()> {
-        let pos = entity.pos.clone();
-        let owner = entity.owner.clone();
-
-        if pos.room.magnitude() > self.world_size || pos.tile.magnitude() > self.room_size {
-            return Err(ScrabError::InvalidPosition(pos))
-        }
-
-        match self.entities.insert( pos, vec![entity]) {
-            Some(mut value) => self.entities.get_mut(&pos).unwrap().append(&mut value),
-            None => (),
-        }
-
-        info!("{} inserted an entity", owner);
-        Ok(())
-    }
-
-    pub fn remove_entity(&mut self, id: u128) -> ScrabResult<()> {
-        for (_pos, list) in self.entities.iter_mut(){
-            for i in 0..list.len() {
-                if list.get(i).unwrap().id == id {
-                    list.remove(i);
-                    return Ok(())
-                }
-            }
-        }
-        Err(ScrabError::EntityNotFound(id))
+    pub fn new_entity(&mut self, entity: EntityBuilder) -> Result<&mut Entity, EntityBuilderError> {
+        self.entities.push(entity.build(self.next_entity_id)?);
+        self.next_entity_id += 1;
+        Ok(self.entities.last_mut().unwrap())
     }
 }
 
@@ -60,10 +39,12 @@ pub type ScrabResult<T> = Result<T, ScrabError>;
 
 #[derive(Error, Debug)]
 pub enum ScrabError {
-    #[error("Could not find entity with id {0}")]
-    EntityNotFound(u128),
+    #[error("Could not find entity with id {0:?}")]
+    EntityNotFound(Position),
     #[error("The position {0:?} is invalid")]
     InvalidPosition(Position),
+    #[error("This space is already occupied {0:?}")]
+    SpaceOcupied(Position),
 }
 
 #[derive(Serialize, Deserialize, Clone)]
@@ -84,16 +65,89 @@ pub struct Tile {
     pub wall: bool,
 }
 
-
 #[derive(Serialize, Deserialize, Debug, Clone, Copy, PartialEq, Eq, Hash)]
 pub struct Position {
     room: Cordinate,
-    tile: Cordinate
+    tile: Cordinate,
 }
 
-#[derive(Serialize, Deserialize, Clone)]
+#[derive(Serialize, Deserialize, Clone, )]
 pub struct Entity {
     id: u128,
     pos: Position,
     owner: String,
+    entity_type: EntityType,
+}
+
+impl Entity {
+    pub fn pos(&self) -> Position {
+        self.pos
+    }
+
+    pub fn owner(&self) -> &str {
+        &self.owner
+    }
+
+    pub fn entity_type(&self) -> &EntityType {
+        &self.entity_type
+    }
+
+    pub fn id(&self) -> u128 {
+        self.id
+    }
+}
+
+#[derive(Serialize, Deserialize, Clone)]
+pub enum EntityType {
+    Crab,
+}
+
+pub struct EntityBuilder {
+    pos: Option<Position>,
+    owner: Option<String>,
+    entity_type: Option<EntityType>,
+}
+
+impl EntityBuilder {
+    pub fn new() -> Self {
+        Self {
+            pos: None,
+            owner: None,
+            entity_type: None,
+        }
+    }
+
+    pub fn set_pos(&mut self, pos: Position) -> &mut Self {
+        self.pos = Some(pos);
+        self
+    }
+
+    pub fn set_owner(&mut self, owner: &str) -> &mut Self {
+        self.owner = Some(owner.to_string());
+        self
+    }
+
+    pub fn set_entity_type(&mut self, e_type: EntityType) -> &mut Self {
+        self.entity_type = Some(e_type);
+        self
+    }
+
+    pub(crate) fn build(self, id: u128) -> Result<Entity, EntityBuilderError> {
+        if self.pos.is_none() || self.owner.is_none() || self.entity_type.is_none() {
+            return Err(EntityBuilderError::FieldsNotSet);
+        }
+
+        Ok(Entity {
+            id,
+            pos: self.pos.unwrap(),
+            owner: self.owner.unwrap(),
+            entity_type: self.entity_type.unwrap(),
+        })
+    }
+}
+
+#[derive(Error, Debug)]
+pub enum EntityBuilderError {
+    #[error("Not all fields were set")]
+    FieldsNotSet,
 }
