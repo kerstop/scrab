@@ -1,7 +1,4 @@
-use std::collections::HashMap;
-
 use hex_grid::{Cordinate, HexGrid};
-use log::info;
 use serde::{Deserialize, Serialize};
 use thiserror::Error;
 

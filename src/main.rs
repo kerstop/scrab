@@ -16,7 +16,7 @@ use crate::{
 };
 
 fn main() -> Result<(), std::io::Error> {
-    simple_logger::init_with_level(log::Level::Debug).unwrap();
+    simple_logger::init_with_level(log::Level::Info).unwrap();
 
     let config = load_config();
 
@@ -27,7 +27,7 @@ fn main() -> Result<(), std::io::Error> {
     });
 
     let gl_handle = Arc::clone(&world);
-    let game_logic_thread = std::thread::spawn(|| game_logic::main_event_loop(gl_handle));
+    let game_logic_thread = std::thread::spawn(|| game_logic::main_loop(gl_handle));
 
     let web_server_thread = std::thread::spawn(move || {
         actix_web::rt::System::new().block_on(async move {
