@@ -5,7 +5,6 @@ use thiserror::Error;
 #[derive(Serialize, Deserialize)]
 pub struct World {
     pub rooms: HexGrid<Room>,
-    entities: Vec<Entity>,
     pub room_size: i32,
     pub world_size: i32,
     pub current_tick: u64,
@@ -20,15 +19,19 @@ impl World {
             room_size,
             world_size,
             current_tick: 0,
-            entities: Vec::new(),
             next_entity_id: 0,
         }
     }
 
-    pub fn new_entity(&mut self, entity: EntityBuilder) -> Result<&mut Entity, EntityBuilderError> {
-        self.entities.push(entity.build(self.next_entity_id)?);
+    pub fn new_entity(&mut self, entity: EntityBuilder) -> ScrabResult<&mut Entity> {
+        let entity = entity.build(self.next_entity_id).unwrap();
+        let room = match self.rooms.get_mut(entity.pos.room) {
+            Some(room) => room,
+            None => return Err(ScrabError::InvalidPosition(entity.pos)),
+        };
+        room.entities.push(entity);
         self.next_entity_id += 1;
-        Ok(self.entities.last_mut().unwrap())
+        Ok(room.entities.last_mut().unwrap())
     }
 }
 
@@ -47,12 +50,14 @@ pub enum ScrabError {
 #[derive(Serialize, Deserialize, Clone)]
 pub struct Room {
     pub tiles: hex_grid::HexGrid<Tile>,
+    pub entities: Vec<Entity>,
 }
 
 impl Room {
     pub fn new(size: i32) -> Self {
         Room {
             tiles: HexGrid::new(size),
+            entities: Vec::new(),
         }
     }
 }
@@ -66,6 +71,16 @@ pub struct Tile {
 pub struct Position {
     room: Cordinate,
     tile: Cordinate,
+}
+
+impl Position {
+    pub fn room(&self) -> Cordinate {
+        self.room 
+    }
+
+    pub fn tile(&self) -> Cordinate {
+        self.tile 
+    }
 }
 
 #[derive(Serialize, Deserialize, Clone, )]
@@ -129,22 +144,16 @@ impl EntityBuilder {
         self
     }
 
-    pub(crate) fn build(self, id: u128) -> Result<Entity, EntityBuilderError> {
+    pub(crate) fn build(self, id: u128) -> Option<Entity> {
         if self.pos.is_none() || self.owner.is_none() || self.entity_type.is_none() {
-            return Err(EntityBuilderError::FieldsNotSet);
+            return None;
         }
 
-        Ok(Entity {
+        Some(Entity {
             id,
             pos: self.pos.unwrap(),
             owner: self.owner.unwrap(),
             entity_type: self.entity_type.unwrap(),
         })
     }
-}
-
-#[derive(Error, Debug)]
-pub enum EntityBuilderError {
-    #[error("Not all fields were set")]
-    FieldsNotSet,
 }

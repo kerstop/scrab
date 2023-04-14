@@ -6,7 +6,7 @@ import Room from "../Room/Room";
 import * as scrab from "../scrab_frontend_types";
 
 function App() {
-  let [world, setWorld] = React.useState<scrab.PublicWorld>();
+  let [world, setWorld] = React.useState<scrab.WorldManifest>();
 
   React.useEffect(() => {
     fetch("http://localhost:8080/world/")

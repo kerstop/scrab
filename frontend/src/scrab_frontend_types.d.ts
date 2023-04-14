@@ -4,22 +4,36 @@
  * DO NOT MODIFY IT BY HAND. Instead, modify the source JSONSchema file,
  * and run json-schema-to-typescript to regenerate this file.
  */
-export interface PublicRoom {
+export type PubEntityType = "Crab";
+
+export interface PubRoom {
+  entities: PubEntity[];
   tiles: PublicTile[];
   [k: string]: unknown;
 }
+export interface PubEntity {
+  id: number;
+  pos: PubCord;
+  ty: PubEntityType;
+  [k: string]: unknown;
+}
+export interface PubCord {
+  q: number;
+  r: number;
+  s: number;
+  [k: string]: unknown;
+}
 export interface PublicTile {
+  cord: PubCord;
   name: string;
   wall: boolean;
-  x: number;
-  y: number;
   [k: string]: unknown;
 }
-export interface PublicWorld {
-  rooms: PublicRoomManifest[];
+export interface WorldManifest {
+  rooms: RoomManifest[];
   [k: string]: unknown;
 }
-export interface PublicRoomManifest {
+export interface RoomManifest {
   name: string;
   screen_space_x: number;
   screen_space_y: number;

@@ -16,7 +16,7 @@ use crate::{
 };
 
 fn main() -> Result<(), std::io::Error> {
-    simple_logger::init_with_level(log::Level::Info).unwrap();
+    //simple_logger::init_with_level(log::Level::Info).unwrap();
 
     let config = load_config();
 

@@ -14,7 +14,7 @@ fn main() {
     //
     // This lists the types that should be emited
     //
-    let types_to_export = [schema_for!(PublicRoom), schema_for!(PublicWorld)];
+    let types_to_export = [schema_for!(PubRoom), schema_for!(WorldManifest)];
 
     if let Ok(mut out_file) = std::fs::OpenOptions::new()
         .write(true)

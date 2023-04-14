@@ -2,7 +2,7 @@ set windows-shell := ["powershell"]
 
 # run the server
 run: build
-    cargo run --package scrab --bin srv
+    cargo run --package scrab
 
 # build everything
 build: emit-ts-types

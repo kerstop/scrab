@@ -1,12 +1,12 @@
 use std::ops::Deref;
-use std::sync::{RwLock, Arc};
+use std::sync::{Arc, RwLock};
 
 use actix_web::web::{Data, Path};
 use actix_web::{get, HttpResponse};
 
-use scrab_types::World;
 use hex_grid::Cordinate;
-use scrab_public_types::{PublicRoom, PublicWorld};
+use scrab_public_types::{PubRoom, WorldManifest};
+use scrab_types::World;
 
 #[derive(Clone)]
 pub struct AppState {
@@ -19,10 +19,10 @@ async fn health() -> &'static str {
 }
 
 #[get("/world/{room}")]
-async fn get_room(room: Path<String>, world: Data<RwLock<World>>) -> HttpResponse {
+async fn get_room(room: Path<String>, app: Data<AppState>) -> HttpResponse {
     if let Some(c) = parse_cord(room.as_str()) {
-        if let Some(r) = world.read().unwrap().rooms.get(c) {
-            return HttpResponse::Ok().json(PublicRoom::from(r));
+        if let Some(r) = app.world.read().unwrap().rooms.get(c) {
+            return HttpResponse::Ok().json(PubRoom::from(r));
         }
     }
 
@@ -41,9 +41,7 @@ fn parse_cord(input: &str) -> Option<Cordinate> {
 }
 
 #[get("/world/")]
-async fn get_world_manifest(world: Data<RwLock<World>>) -> HttpResponse {
-    if let Ok(world) = world.read() {
-        return HttpResponse::Ok().json(PublicWorld::from(world.deref()));
-    }
-    todo!()
+async fn get_world_manifest(app: Data<AppState>) -> HttpResponse {
+    let world = app.world.read().unwrap();
+    return HttpResponse::Ok().json(WorldManifest::from(world.deref()));
 }
