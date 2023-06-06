@@ -15,7 +15,7 @@ impl World {
     pub fn new(world_size: i32, room_size: i32) -> Self {
         let room_template = Room::new(room_size);
         World {
-            rooms: HexGrid::from_template(room_template.clone(), world_size),
+            rooms: HexGrid::from_template(room_template, world_size),
             room_size,
             world_size,
             current_tick: 0,
