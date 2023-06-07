@@ -1,7 +1,6 @@
 pub mod game_logic;
 pub mod graphql_api;
 pub mod world;
-pub mod www;
 
 use std::sync::{Arc, RwLock};
 
@@ -17,9 +16,13 @@ use log::{error, info};
 use crate::{
     graphql_api::{graphiql_index, graphql_index},
     world::WorldGenerationSettings,
-    www::AppState,
 };
 use scrab_types::World;
+
+#[derive(Clone)]
+pub struct AppState {
+    pub world: Arc<RwLock<World>>,
+}
 
 fn main() -> Result<(), std::io::Error> {
     //simple_logger::init_with_level(log::Level::Info).unwrap();
@@ -49,9 +52,6 @@ fn main() -> Result<(), std::io::Error> {
                     )
                     .service(web::resource("/data").guard(Post()).to(graphql_index))
                     .service(web::resource("/data").guard(Get()).to(graphiql_index))
-                    .service(www::health)
-                    .service(www::get_room)
-                    .service(www::get_world_manifest)
                     .service(Files::new("/", "./frontend/dist").index_file("index.html"))
                     .app_data(app_state.clone())
                     .app_data(Data::new(schema.clone()))

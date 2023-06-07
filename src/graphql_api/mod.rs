@@ -1,6 +1,12 @@
+mod world;
+
 use actix_web::{web::Data, HttpResponse};
-use async_graphql::{http::GraphiQLSource, EmptyMutation, EmptySubscription, Object, Schema};
+use async_graphql::{http::GraphiQLSource, EmptyMutation, EmptySubscription, Object, Schema, OutputType, async_trait::async_trait};
 use async_graphql_actix_web::{GraphQLRequest, GraphQLResponse};
+use scrab_types::Room;
+
+use world::GQLWorld;
+
 
 pub type ScrabSchema = Schema<QueryRoot, EmptyMutation, EmptySubscription>;
 
@@ -24,5 +30,9 @@ pub struct QueryRoot;
 impl QueryRoot {
     async fn test(&self) -> &'static str {
         "alive"
+    }
+
+    async fn world(&self) -> GQLWorld {
+        GQLWorld {  }
     }
 }
