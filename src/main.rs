@@ -2,8 +2,9 @@ pub mod game_logic;
 pub mod graphql_api;
 pub mod world;
 
-use std::sync::{Arc, RwLock};
+use std::sync::Arc;
 
+use tokio::sync::RwLock;
 use actix_cors::Cors;
 use actix_files::Files;
 use actix_web::{
@@ -14,15 +15,12 @@ use actix_web::{
 use log::{error, info};
 
 use crate::{
-    graphql_api::{graphiql_index, graphql_index},
+    graphql_api::{graphiql_index, graphql_index, AppState},
     world::WorldGenerationSettings,
 };
 use scrab_types::World;
 
-#[derive(Clone)]
-pub struct AppState {
-    pub world: Arc<RwLock<World>>,
-}
+
 
 fn main() -> Result<(), std::io::Error> {
     //simple_logger::init_with_level(log::Level::Info).unwrap();
@@ -31,11 +29,11 @@ fn main() -> Result<(), std::io::Error> {
 
     let world = Arc::from(RwLock::new(World::from(config)));
 
-    let schema = graphql_api::build_schema();
-
-    let app_state = Data::new(AppState {
+    let app_state = AppState {
         world: Arc::clone(&world),
-    });
+    };
+
+    let schema = graphql_api::build_schema(app_state);
 
     let gl_handle = Arc::clone(&world);
     let game_logic_thread = std::thread::spawn(|| game_logic::main_loop(gl_handle));
@@ -53,7 +51,6 @@ fn main() -> Result<(), std::io::Error> {
                     .service(web::resource("/data").guard(Post()).to(graphql_index))
                     .service(web::resource("/data").guard(Get()).to(graphiql_index))
                     .service(Files::new("/", "./frontend/dist").index_file("index.html"))
-                    .app_data(app_state.clone())
                     .app_data(Data::new(schema.clone()))
             });
             server = match server.bind(("127.0.0.1", 8080)) {

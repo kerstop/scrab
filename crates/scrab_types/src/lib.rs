@@ -64,7 +64,7 @@ impl Room {
 
 #[derive(Serialize, Deserialize, Default, Clone)]
 pub struct Tile {
-    pub wall: bool,
+    pub is_wall: bool,
 }
 
 #[derive(Serialize, Deserialize, Debug, Clone, Copy, PartialEq, Eq, Hash)]

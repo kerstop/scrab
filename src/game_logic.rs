@@ -1,21 +1,22 @@
-use std::{sync::{Arc, RwLock}, time::Duration};
+use std::{sync::Arc, time::Duration};
 
 use log::info;
 
 use scrab_types::World;
 use wasmer::{Store, Cranelift, Module, imports, Function, Instance, wat2wasm};
+use tokio::sync::RwLock;
 
 
 
 pub fn main_loop(world: Arc<RwLock<World>>) {
     
     loop {
-        info!("Starting tick {}", world.read().unwrap().current_tick);
+        info!("Starting tick {}", world.blocking_read().current_tick);
         execute_wasm();
         std::thread::sleep(Duration::from_secs(2));
         
-        info!("Finishing tick {}", world.read().unwrap().current_tick);
-        world.write().unwrap().current_tick += 1;
+        info!("Finishing tick {}", world.blocking_read().current_tick);
+        world.blocking_write().current_tick += 1;
     }
 }
 

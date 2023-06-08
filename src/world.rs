@@ -43,7 +43,7 @@ fn generate_walls(world: &mut World, gen_settings: &WorldGenerationSettings) {
                 .get(tile_cord)
                 .unwrap();
 
-            tile.wall = (noise_map_value + edges_map_value) > wall_threshhold;
+            tile.is_wall = (noise_map_value + edges_map_value) > wall_threshhold;
         }
     }
 }
