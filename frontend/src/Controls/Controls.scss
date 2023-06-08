@@ -1,7 +1,18 @@
 .controls {
-    position: absolute;
-    top: 0;
-    left: 0; 
-    width: 20%;
-    background-color: rgba(0, 0, 0, 0.24);
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 20%;
+  background-color: rgba(0, 0, 0, 0.24);
+}
+
+.compass {
+  width: 75%;
+  aspect-ratio: 1;
+  .current-room {
+    transform: translate(50%, 50%) scale(0.4) rotate(30deg);
+    fill: hsla(0, 0%, 0%, 0.329);
+    stroke: rgb(75, 75, 75);
+    stroke-width: 3px;
+  }
 }

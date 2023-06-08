@@ -1,7 +1,31 @@
 import Tile from "../Tile/Tile";
 import * as React from "react";
-import * as scrab from "../scrab_frontend_types";
+import { useQuery } from "@apollo/client";
 import * as Hex from "../hex_utils";
+import { gql } from "../__generated__";
+
+const GET_ROOM_INFO = gql(`
+  query GetRoomInfo {
+    world {
+      room(q: 0, r: 0, s: 0) {
+        cordinate {
+          q
+          r
+          s
+        }
+
+        tiles {
+          isWall
+          cordinate {
+            q
+            r
+            s
+          }
+        }
+      }
+    }
+  }
+`);
 
 interface RoomArgs {
   name: string;
@@ -9,39 +33,38 @@ interface RoomArgs {
   y?: number;
 }
 
-const tile_spacing = 100;
+const TILE_SPACING = 100;
 
 export default function Room(args: RoomArgs) {
-  let [room, setRoom] = React.useState<scrab.PubRoom>();
+  const { loading, error, data } = useQuery(GET_ROOM_INFO);
 
-  React.useEffect(() => {
-    fetch(`http://localhost:8080/world/${args.name}`)
-      .then((resp) => {
-        return resp.json();
-      })
-      .then((data) => {
-        setRoom(data);
-      });
-  }, []);
+  if (loading) console.log("loading...");
+  if (error) console.log(error);
+  if (data) console.log(data);
 
-  if (room !== undefined) {
+  if (data) {
+    const {
+      world: { room },
+    } = data;
+
     return (
-      <g transform={`translate(${args.x??0}, ${args.y??0})`}>
+      <g transform={`translate(${args.x ?? 0}, ${args.y ?? 0})`}>
         {room.tiles.map((tile, i: any) => {
-          let cord = new Hex.Cordinate(tile.cord.q,tile.cord.r,tile.cord.s);
-          let [x,y] = cord.toPixelFlat();
+          let [x, y] = Hex.toPixelFlat(tile.cordinate);
           return (
             <Tile
               key={i}
-              wall={tile.wall}
-              x={x * tile_spacing}
-              y={y * tile_spacing}
+              wall={tile.isWall}
+              x={x * TILE_SPACING}
+              y={y * TILE_SPACING}
             />
           );
         })}
       </g>
     );
-  } else {
+  } else if (loading) {
     return <p>"Loading"</p>;
+  } else {
+    return <p>{error?.message}</p>;
   }
 }

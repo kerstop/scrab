@@ -1,35 +1,17 @@
-export class Cordinate {
-  valid: boolean;
-  q: number;
-  r: number;
-  s: number;
-  constructor(q: number, r: number, s: number) {
-    if (q + r + s == 0) {
-      this.valid = true;
-      this.q = q;
-      this.r = r;
-      this.s = s;
-    } else {
-      this.valid = false;
-      this.q = NaN;
-      this.r = NaN;
-      this.s = NaN;
-    }
-  }
+import { Cordinate } from "./__generated__/graphql";
 
-  isValid() {
-    this.valid
-  }
+export function isValid(cord: Cordinate): boolean {
+  return cord.q + cord.r + cord.s === 0;
+}
 
-  toPixelFlat(): [number,number] {
-    let x = 1.5 * this.q;
-    let y = Math.sqrt(3) / 2 * this.q + Math.sqrt(3) * this.r
-    return [x,y]
-  }
+export function toPixelFlat(cord: Cordinate): [number, number] {
+  let x = 1.5 * cord.q;
+  let y = (Math.sqrt(3) / 2) * cord.q + Math.sqrt(3) * cord.r;
+  return [x, y];
+}
 
-  toPixelPoint(): [number,number] {
-    let x = Math.sqrt(3) * this.q + Math.sqrt(3) / 2 * this.r;
-    let y = 1.5 * this.r
-    return [x,y]
-  }
+export function toPixelPoint(cord: Cordinate): [number, number] {
+  let x = Math.sqrt(3) * cord.q + (Math.sqrt(3) / 2) * cord.r;
+  let y = 1.5 * cord.r;
+  return [x, y];
 }

@@ -1,7 +1,6 @@
 import "./ViewWindow.scss";
 import * as React from "react";
 import Tile from "../Tile/Tile";
-import * as scrab from "../scrab_frontend_types";
 import Room from "../Room/Room";
 
 interface ViewWindowInterface {
@@ -39,7 +38,6 @@ function ViewWindow(args: ViewWindowInterface) {
       onMouseDown={(e) => {
         if (window.current !== null) {
           window.current.onmousemove = (e) => {
-            console.log(`(${e.movementX}, ${e.movementY})`);
             setX((x += e.movementX / zoom));
             setY((y += e.movementY / zoom));
           };

@@ -2,8 +2,8 @@ use std::sync::Arc;
 
 use actix_web::{web::Data, HttpResponse};
 use async_graphql::{
-    async_trait::async_trait, http::GraphiQLSource, Context, EmptyMutation, EmptySubscription,
-    Object, OutputType, Schema, SimpleObject,
+    http::GraphiQLSource, Context, EmptyMutation, EmptySubscription,
+    Object, Schema, SimpleObject,
 };
 use async_graphql_actix_web::{GraphQLRequest, GraphQLResponse};
 use hex_grid::Cordinate;
