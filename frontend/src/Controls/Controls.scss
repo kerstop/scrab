@@ -9,10 +9,20 @@
 .compass {
   width: 75%;
   aspect-ratio: 1;
+  g {
+    transform: translate(50%, 50%) scale(0.4)
+  }
   .current-room {
-    transform: translate(50%, 50%) scale(0.4) rotate(30deg);
+    transform: rotate(30deg) scale(0.85);
     fill: hsla(0, 0%, 0%, 0.329);
     stroke: rgb(75, 75, 75);
     stroke-width: 3px;
   }
+  .other-rooms{
+    transform: translate(var(--x),var(--y)) rotate(30deg) scale(0.9);
+    &:hover {
+      fill: blue;
+    }
+  }
 }
+

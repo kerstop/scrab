@@ -13,7 +13,7 @@ import { TypedDocumentNode as DocumentNode } from '@graphql-typed-document-node/
  * Therefore it is highly recommended to use the babel or swc plugin for production.
  */
 const documents = {
-    "\n  query GetRoomInfo {\n    world {\n      room(q: 0, r: 0, s: 0) {\n        cordinate {\n          q\n          r\n          s\n        }\n\n        tiles {\n          isWall\n          cordinate {\n            q\n            r\n            s\n          }\n        }\n      }\n    }\n  }\n": types.GetRoomInfoDocument,
+    "\n  query GetRoomInfo($q: Int = 0,$r: Int = 0,$s: Int = 0) {\n    world {\n      room(q: $q, r: $r, s: $s) {\n        cordinate {\n          q\n          r\n          s\n        }\n\n        tiles {\n          isWall\n          cordinate {\n            q\n            r\n            s\n          }\n        }\n      }\n    }\n  }\n": types.GetRoomInfoDocument,
 };
 
 /**
@@ -33,7 +33,7 @@ export function gql(source: string): unknown;
 /**
  * The gql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
-export function gql(source: "\n  query GetRoomInfo {\n    world {\n      room(q: 0, r: 0, s: 0) {\n        cordinate {\n          q\n          r\n          s\n        }\n\n        tiles {\n          isWall\n          cordinate {\n            q\n            r\n            s\n          }\n        }\n      }\n    }\n  }\n"): (typeof documents)["\n  query GetRoomInfo {\n    world {\n      room(q: 0, r: 0, s: 0) {\n        cordinate {\n          q\n          r\n          s\n        }\n\n        tiles {\n          isWall\n          cordinate {\n            q\n            r\n            s\n          }\n        }\n      }\n    }\n  }\n"];
+export function gql(source: "\n  query GetRoomInfo($q: Int = 0,$r: Int = 0,$s: Int = 0) {\n    world {\n      room(q: $q, r: $r, s: $s) {\n        cordinate {\n          q\n          r\n          s\n        }\n\n        tiles {\n          isWall\n          cordinate {\n            q\n            r\n            s\n          }\n        }\n      }\n    }\n  }\n"): (typeof documents)["\n  query GetRoomInfo($q: Int = 0,$r: Int = 0,$s: Int = 0) {\n    world {\n      room(q: $q, r: $r, s: $s) {\n        cordinate {\n          q\n          r\n          s\n        }\n\n        tiles {\n          isWall\n          cordinate {\n            q\n            r\n            s\n          }\n        }\n      }\n    }\n  }\n"];
 
 export function gql(source: string) {
   return (documents as any)[source] ?? {};

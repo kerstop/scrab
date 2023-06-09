@@ -3,11 +3,12 @@ import * as React from "react";
 import { useQuery } from "@apollo/client";
 import * as Hex from "../hex_utils";
 import { gql } from "../__generated__";
+import { Cordinate } from "../__generated__/graphql";
 
 const GET_ROOM_INFO = gql(`
-  query GetRoomInfo {
+  query GetRoomInfo($q: Int = 0,$r: Int = 0,$s: Int = 0) {
     world {
-      room(q: 0, r: 0, s: 0) {
+      room(q: $q, r: $r, s: $s) {
         cordinate {
           q
           r
@@ -28,19 +29,19 @@ const GET_ROOM_INFO = gql(`
 `);
 
 interface RoomArgs {
-  name: string;
   x?: number;
   y?: number;
+  currentRoom: Cordinate; 
 }
 
 const TILE_SPACING = 100;
 
 export default function Room(args: RoomArgs) {
-  const { loading, error, data } = useQuery(GET_ROOM_INFO);
+  const { currentRoom: {q,r,s} } = args;
 
-  if (loading) console.log("loading...");
-  if (error) console.log(error);
-  if (data) console.log(data);
+  const { loading, error, data } = useQuery(GET_ROOM_INFO, {
+    variables: { q, r, s },
+  });
 
   if (data) {
     const {
