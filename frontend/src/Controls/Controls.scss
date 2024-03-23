@@ -1,3 +1,6 @@
+
+@import url('https://fonts.googleapis.com/css2?family=Roboto+Mono&display=swap');
+
 .controls {
   position: absolute;
   top: 0;
@@ -9,8 +12,11 @@
 .compass {
   width: 75%;
   aspect-ratio: 1;
-  g {
-    transform: translate(50%, 50%) scale(0.4)
+  text {
+    transform: translate(var(--x), var(--y)) scale(5);
+    fill: hsla(0, 0%, 83%, 0.329);
+    text-anchor: middle;
+    font-family: 'Roboto Mono', monospace;
   }
   .current-room {
     transform: rotate(30deg) scale(0.85);
@@ -19,7 +25,7 @@
     stroke-width: 3px;
   }
   .other-rooms{
-    transform: translate(var(--x),var(--y)) rotate(30deg) scale(0.9);
+    transform: translate(var(--x),var(--y)) rotate(30deg) scale(0.8);
     &:hover {
       fill: blue;
     }

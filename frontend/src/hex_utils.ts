@@ -1,4 +1,8 @@
-import { Cordinate } from "./__generated__/graphql";
+export interface Cordinate {
+  q:number,
+  r:number,
+  s:number,
+}
 
 export function isValid(cord: Cordinate): boolean {
   return cord.q + cord.r + cord.s === 0;

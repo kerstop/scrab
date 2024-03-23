@@ -2,8 +2,9 @@ import Tile from "../Tile/Tile";
 import * as React from "react";
 import { useQuery } from "@apollo/client";
 import * as Hex from "../hex_utils";
+import { Cordinate } from "../hex_utils";
 import { gql } from "../__generated__";
-import { Cordinate } from "../__generated__/graphql";
+import "./Room.scss";
 
 const GET_ROOM_INFO = gql(`
   query GetRoomInfo($q: Int = 0,$r: Int = 0,$s: Int = 0) {
@@ -64,8 +65,8 @@ export default function Room(args: RoomArgs) {
       </g>
     );
   } else if (loading) {
-    return <p>"Loading"</p>;
+    return <text className="error-text">Loading</text>;
   } else {
-    return <p>{error?.message}</p>;
+    return <text className="error-text">{error?.message}</text>;
   }
 }
